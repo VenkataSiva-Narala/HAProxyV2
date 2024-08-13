@@ -14,7 +14,6 @@ const HomePage = () => {
     const [JsonData, setJsonData] = useState({});
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-    const [LoadingFlag, setLoadingFlag] = useState(false);
     const [activeStatus, setActiveStatus] = useState('');
     const [runningSince, setRunningSince] = useState('');
     const [logsText, setLogsText] = useState('');
@@ -54,7 +53,6 @@ const HomePage = () => {
                     setActiveStatus(data.status || 'N/A');
                     setRunningSince(data.running_since || 'N/A');
                     setLogsText(data.log_text || 'No logs available');
-                    setLoadingFlag(false);
                 } else if (data.error === 1) {
                     navigate('/');
                 }

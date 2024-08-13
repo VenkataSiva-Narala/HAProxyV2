@@ -2,26 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Form, InputNumber, Select, Button, Divider, message,  } from "antd";
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
 const Default = () => {
     const IP = IpAddress();
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [error, setError] = useState(null);
     const [form] = Form.useForm();
     const [Jsondata, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
-
-    const location = useLocation();
     const navigate = useNavigate();
 
 
     useEffect(() => {
         // Update the screen width whenever the window is resized
         const handleResize = () => {
-            setScreenWidth(window.innerWidth);
         };
         window.addEventListener('resize', handleResize);
         // Clean up the event listener when the component unmounts
@@ -61,7 +55,7 @@ const Default = () => {
         minHeight: '100vh',
         padding: '20px',
         backgroundColor: '#dee2e6',
-        padding: '20px'
+       
     };
 
     const headerStyle = {
@@ -90,7 +84,7 @@ const Default = () => {
     // console.log("the token is ", localStoragekey)
 
     useEffect(() => {
-        setLoadingFlag(true)
+       
         fetch(IP + "default", {
             headers: {
                 "Authorization": localStoragekey
@@ -102,7 +96,7 @@ const Default = () => {
                 if (data.error === 0) {
                     setJsonData(data)
                     console.log("The data is", data);
-                    setLoadingFlag(false)
+                 
                 } else if (data.error === 1) {
                     navigate('/');
                 }
@@ -127,7 +121,7 @@ const Default = () => {
     const handleSave = () => {
         form.validateFields()
             .then(values => {
-                setLoadingFlag(true);
+             
                 console.log('Saved values:', values);
 
                 // Make a POST request to save the form data
@@ -139,7 +133,7 @@ const Default = () => {
                 })
                     .then(response => {
                         console.log('Save response:', response);
-                        setLoadingFlag(false);
+                    
                         if (response.status === 200 && response.data.error === 0) {
                             message.success('Saved successfully!');
                         } else {
@@ -148,7 +142,7 @@ const Default = () => {
                     })
                     .catch(error => {
                         console.error('Save error:', error);
-                        setLoadingFlag(false);
+                       
                         message.error('An error occurred while saving.');
                     });
             })

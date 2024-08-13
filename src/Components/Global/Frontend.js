@@ -10,23 +10,19 @@ import TableRow from "@mui/material/TableRow";
 
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
 const FrontendConfig = (props) => {
     const IP = IpAddress();
-    const [selectedFrontend, setSelectedFrontend] = useState({});
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [compression, setCompression] = useState([]);
 
-    const [compressionAlgo, setCompressionAlgo] = useState('');
     // const [compressionTypes, setCompressionTypes] = useState(new Set());
     const [form] = Form.useForm();
     const [Jsondata, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
-    const [fetchLoading, setFetchLoading] = useState(true);
-    const location = useLocation();
+  
     const navigate = useNavigate();
     const [checkedValues, setCheckedValues] = useState([]);
     const containerRef = useRef(null);
@@ -77,10 +73,7 @@ const FrontendConfig = (props) => {
         }
     }, [Jsondata]);
 
-    const newCheckedValues = (bindIndex) => {
-        newCheckedValues = Jsondata?.frontend_data[bindIndex]?.frontend?.compression?.types || [];
-        setCheckedValues(new Set(newCheckedValues));
-    }
+  
     // useEffect(() => {
     // 	if (!localStorage.getItem("proToken")) {
     // 		navigate('/')
@@ -156,7 +149,6 @@ const FrontendConfig = (props) => {
         }
     }, [])
     useEffect(() => {
-        setLoadingFlag(true)
         fetch(IP + "frontend", {
             headers: {
                 "Authorization": localStoragekey
@@ -185,7 +177,6 @@ const FrontendConfig = (props) => {
 
 
                     console.log("The data is", data);
-                    setLoadingFlag(false)
                 } else if (data.error === 1) {
                     message.info("Token Expired or Unauthorized")
                     navigate('/');
@@ -193,7 +184,6 @@ const FrontendConfig = (props) => {
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                setLoadingFlag(false);
             });
     }, []);
     console.log("Jsondata?.data?.data?.maxconn", Jsondata?.frontend_data?.frontend?.compression);
@@ -201,24 +191,9 @@ const FrontendConfig = (props) => {
 
 
 
-    const handleButtonClick = () => {
-        setFrontendConfigurations([...frontendConfigurations, {
-            frontendName: '',
-            defaultBackend: 'Select',
-            compression: '',
-            compressionAlgo: '',
-            mode: '',
-            httpRedirect: '',
-            compressionTypes: new Set(),
-            binds: [{ address: '', name: '', port: '', ssl_certificate: '', ssl: false }] // Default bind field
-        }]);
-    };
 
-    const handleAddBind = (index) => {
-        const updatedFrontends = [...frontendConfigurations];
-        updatedFrontends[index].binds.push({ address: '', name: '', port: '', ssl_certificate: '', ssl: false });
-        setFrontendConfigurations(updatedFrontends);
-    };
+
+  
     const handleCompressionChange = (value, index) => {
         const newJsonData = { ...compression };
         newJsonData[index] = value;
@@ -228,21 +203,6 @@ const FrontendConfig = (props) => {
     };
 
 
-
-
-    const handleCompressionAlgoChange = (value, index) => {
-        const newJsonData = { ...Jsondata };
-        newJsonData.frontend_data[index].frontend.compression.algorithms[0] = value;
-        setJsonData(newJsonData);
-    };
-
-    const handleDeleteBind = (index) => {
-        const updatedFrontends = [...frontendConfigurations];
-        updatedFrontends.forEach((frontend) => {
-            frontend.binds.splice(index, 1); // Remove the bind at the specified index
-        });
-        setFrontendConfigurations(updatedFrontends);
-    };
     const styles = {
         container: {
             position: "relative",
@@ -334,8 +294,8 @@ const FrontendConfig = (props) => {
                 defaultDataValues.push(compressiontypeValue)
 
                 console.log("the length is", Jsondata.frontend_data.length);
-                const frontendbackendNames = Jsondata.backend_names;
-                console.log("frontendbackendNames", defaultDataValues);
+                // const frontendbackendNames = Jsondata.backend_names;
+                // console.log("frontendbackendNames", defaultDataValues);
 
                 if (frontendData?.frontend) {
                     console.log("Frontend Name:", frontendData?.frontend?.name);
@@ -396,21 +356,14 @@ const FrontendConfig = (props) => {
 
     console.log("the data is this", Jsondata);
 
-    const handleModeChange = (value, index) => {
-        const updatedData = [...Jsondata];
-        updatedData[index].data.mode = value;
-        setJsonData(updatedData);
-    };
+
     const onFinish = (values) => {
         console.log('Received values:', values);
         var MainSavejsondata = []
 
         for (let i = 0; i < Jsondata.frontend_data.length; i++) {
             var frontendvalues = {}
-            const updatedValues = {
-                ...values,
-                types: values[`compressionType_${i}`],
-            };
+           
             console.log("updatedValues", checkedValues);
             //  var frontendData = Jsondata.frontend_data[i];
             //  console.log("frontendDatafrontendData",frontendData);
@@ -457,7 +410,6 @@ const FrontendConfig = (props) => {
         })
             .then(response => {
                 console.log('Save response:', response);
-                setLoadingFlag(false);
                 if (response.status === 200) {
                     message.success('Saved successfully!');
                 } else {
@@ -466,7 +418,6 @@ const FrontendConfig = (props) => {
             })
             .catch(error => {
                 console.error('Save error:', error);
-                setLoadingFlag(false);
                 message.error('An error occurred while saving.');
             });
 

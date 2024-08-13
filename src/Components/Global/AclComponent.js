@@ -9,29 +9,20 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import axios from "axios";
-import { json, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import IpAddress from "../../IPConfig";
 
 const AclComponent = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [JsonData, setJsonData] = useState([]);
-  const [loadingFlag, setLoadingFlag] = useState(false);
   const [form] = Form.useForm();
-  const location = useLocation();
   const navigate = useNavigate();
   const IP = IpAddress();
-
-  const [frontendNames, setFrontendNames] = useState([]);
-
   const [frontendOptions, setFrontendOptions] = useState([]);
   const [selectedfrontend, setSelectedFrontend] = useState(null);
   const [aclData, setAclData] = useState(null);
-  const [acltotalData, setAclTotalData] = useState([]);
 
-  const [resultAcl, setResultAcl] = useState([]);
-  const [saveAcl, setSaveAcl] = useState({});
-  const [dialogState, setDialogState] = useState(false);
   const { Option } = Select;
 
   const localStoragekey = localStorage.getItem("proToken");
@@ -54,7 +45,6 @@ const AclComponent = () => {
 
 
   useEffect(() => {
-    setLoadingFlag(true);
     fetch(IP + "acl_lines", {
       headers: {
         Authorization: localStoragekey,
@@ -85,15 +75,15 @@ const AclComponent = () => {
         });
         console.log("data===>", data.data);
         setAclData(data.data);
-        setResultAcl(data.data);
+       
         console.log("setJsonData", data);
         setJsonData(data.data);
-        setLoadingFlag(false);
+        
 
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        setLoadingFlag(false);
+       
       });
   }, []);
   console.log("jsonfrombackend", JsonData);
@@ -134,7 +124,6 @@ const AclComponent = () => {
         [`value_${i}`]: aclData[i]?.value,
       })
     }
-    setAclTotalData(dummyrulesacl)
   }, [aclData]);
 
 
@@ -167,7 +156,6 @@ const AclComponent = () => {
     })
       .then(response => {
         console.log('Save response:', response);
-        setLoadingFlag(false);
         if (response.status === 200) {
           message.success('Saved successfully!');
         } else {
@@ -176,7 +164,6 @@ const AclComponent = () => {
       })
       .catch(error => {
         console.error('Save error:', error);
-        setLoadingFlag(false);
         message.error('An error occurred while saving.');
       });
 
@@ -470,13 +457,12 @@ const AclComponent = () => {
                         <MinusCircleFilled style={{ fontSize: "20px", color: "rgb(255 22 22)", cursor: "pointer" }}
                           // onClick={() => handleDelete(index)} 
                           onClick={() => {
-                            const frontendName = selectedfrontend;
-                            const indexvalues = form.getFieldValue(`index_${index}`);
+                           
+                         
 
                             const ACLNames = form.getFieldValue(`aclname_${index}`)?.trim() !== "" ? form.getFieldValue(`aclname_${index}`) : null;
                             const Criterion = form.getFieldValue(`criterion_${index}`)?.trim() !== "" ? form.getFieldValue(`criterion_${index}`) : null;
                             const Value = form.getFieldValue(`value_${index}`)?.trim() !== "" ? form.getFieldValue(`value_${index}`) : null;
-                            const Index = form.getFieldValue(`index_${index}`);
                             handleDelete(index);
                             if (Criterion && ACLNames && Value) {
 

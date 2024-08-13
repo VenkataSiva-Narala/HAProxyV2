@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Input,  Divider, message } from "antd";
+import { Button, Form, Input, Divider, message } from "antd";
 
 // import '../CssFolder/StyleCss.css';
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import {  useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Stats = (props) => {
     const IP = IpAddress();
     const IPWithoutPort = IP.replace(/^https?:\/\//, '').split(':')[0];
-    const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [JsonData, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
     const [form] = Form.useForm();
     const [enabled, setEnabled] = useState(true);
-    const [loading, setLoading] = useState(false);
     const [uri, setUri] = useState('');
     const [bindport, setBindport] = useState('');
     const [urll, setUrll] = useState('');
@@ -23,7 +20,6 @@ const Stats = (props) => {
 
     useEffect(() => {
         const handleResize = () => {
-            setScreenWidth(window.innerWidth);
         };
         window.addEventListener("resize", handleResize);
         return () => {
@@ -57,7 +53,6 @@ const Stats = (props) => {
     }, [])
     // console.log("the token is ", localStoragekey)
     useEffect(() => {
-        setLoadingFlag(true)
         fetch(IP + "stats", {
             headers: {
                 "Authorization": localStoragekey
@@ -69,7 +64,6 @@ const Stats = (props) => {
                 if (data.error === 0) {
                     setJsonData(data)
                     console.log("The data is", data);
-                    setLoadingFlag(false)
                 } else if (data.error === 1) {
                     navigate('/');
                 }
@@ -121,7 +115,6 @@ const Stats = (props) => {
     }, [IPWithoutPort, bindport, urll]);
 
     const onFinish = (values) => {
-        setLoading(true);
         const data = {
             // stats_action:true,
             bindaddress: values.bindaddress,
@@ -137,7 +130,7 @@ const Stats = (props) => {
             data.stats_action = false;
         }
         console.log('datadatadata:', data);
-        setUri(values.bindaddress);
+        setUri(values.uri);
         setBindport(values.bindport);
         setUrll(values.urll);
         axios.post(IP + '/save_stats', data, {
@@ -148,7 +141,6 @@ const Stats = (props) => {
         })
             .then(response => {
                 console.log('Save response:', response);
-                setLoading(false); // Adjusted to match original variable name
                 if (response.status === 200 && response.data.error === 0) {
                     message.success('Saved successfully!');
                 } else {
@@ -157,7 +149,6 @@ const Stats = (props) => {
             })
             .catch(error => {
                 console.error('Save error:', error);
-                setLoading(false); // Adjusted to match original variable name
                 message.error('An error occurred while saving.');
             });
     };

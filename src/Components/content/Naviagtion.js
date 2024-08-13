@@ -113,9 +113,9 @@ const Naviagtion = () => {
         <a href="/home">Configure LB</a>
       </Menu.Item>
       <Menu.Item key="2">
-        <Link as={Link} to="/current-config-view">
+        <a href="/current-config-view">
           Current Config-view
-        </Link>
+        </a>
       </Menu.Item>
       <Menu.Item key="3">
         <a href="/deploymenthistory">Deployment History</a>

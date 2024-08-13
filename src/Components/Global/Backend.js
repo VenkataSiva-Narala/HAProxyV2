@@ -13,22 +13,18 @@ import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from
 
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 const { Option } = Select;
 
 const Backend = () => {
     const IP = IpAddress();
     const [newJsonData, setNewJsonData] = useState([{ type: "new", server: [], data: { name: '', mode: '', balance: { algorithm: "" } } }]);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [backendIndexplus, setBackendIndexPlus] = useState(1);
-    const [ServerIndexplus, setServerIndexplus] = useState(1);
     const [contactPersonDeatilsIsOpen, setContactPersonDetailsIsOpen] = useState(true);
     const [form] = Form.useForm();
     const [JsonData, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
     // const [fetchLoading, setFetchLoading] = useState(true);
     // const [formValues, setFormValues] = useState(null);
-    const location = useLocation();
     const navigate = useNavigate();
     const containerRef = useRef(null);
 
@@ -52,7 +48,7 @@ const Backend = () => {
     console.log("the token is ", localStoragekey)
 
     useEffect(() => {
-        setLoadingFlag(true)
+       
         fetch(IP + "backend", {
             headers: {
                 "Authorization": localStoragekey
@@ -64,7 +60,7 @@ const Backend = () => {
                 if (data.error === 0) {
                     setJsonData(JSON.parse(data.data))
                     console.log("The data is", data);
-                    setLoadingFlag(false)
+                    
                 } else if (data.error === 1) {
                     message.info("Token Expired or UNAUTHORIZED")
                     navigate('/');
@@ -72,16 +68,11 @@ const Backend = () => {
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                setLoadingFlag(false);
+               
             });
     }, []);
 
 
-    const handleNameChange = (value, index) => {
-        const updatedData = [...newJsonData];
-        updatedData[index].data.name = value;
-        setNewJsonData(updatedData);
-    };
 
     const handleAlgorithmChange = (value, index) => {
         const updatedData = [...newJsonData];
@@ -137,12 +128,7 @@ const Backend = () => {
         }
     }, [JsonData]);
 
-    const handlePrimaryContactChange = (index, value) => {
-        const updatedData = [...newJsonData];
-        updatedData[index].data.check = value;
-        setNewJsonData(updatedData);
-    };
-
+  
     const handleClickOnPlusButton = (index) => {
         console.log("the plus button  is");
         const updatedData = [...JsonData];
@@ -223,11 +209,7 @@ const Backend = () => {
         }
     };
 
-    const handleServerChange = (backendIndex, serverIndex, key, value) => {
-        const updatedData = [...newJsonData];
-        updatedData[backendIndex].server[serverIndex][key] = value;
-        setNewJsonData(updatedData);
-    };
+
     const styles = {
         container: {
             position: "relative",
@@ -371,7 +353,7 @@ const Backend = () => {
         })
             .then(response => {
                 console.log('Save response:', response);
-                setLoadingFlag(false);
+                
                 if (response.status === 200) {
                     message.success('Saved successfully!');
                 } else {
@@ -380,7 +362,7 @@ const Backend = () => {
             })
             .catch(error => {
                 console.error('Save error:', error);
-                setLoadingFlag(false);
+                
                 message.info('An error occurred while saving.');
             });
 
@@ -616,7 +598,6 @@ const Backend = () => {
                                                                     <Select
                                                                         placeholder="Select"
                                                                         style={{ width: "4cm", marginTop: "0.2cm", marginLeft: "0.1cm", }}
-                                                                    // onChange={(value) => handlePrimaryContactChange(index, value)}
                                                                     >
                                                                         <Option value="enabled">Enabled</Option>
                                                                         <Option value="disabled">Disabled</Option>

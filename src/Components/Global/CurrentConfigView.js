@@ -49,7 +49,6 @@ const CurrentConfigView = () => {
     return <div style={styles.error}>Error: {error.message}</div>;
   }
 
-  const index = 0;
 
   return (
     <div style={styles.container}>

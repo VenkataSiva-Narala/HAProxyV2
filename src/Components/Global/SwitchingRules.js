@@ -9,7 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -24,13 +24,11 @@ const SwitchingRules = () => {
     //     },
     // ]);
     const IP = IpAddress();
-    const [aclData, setAclData] = useState([]);
-    const [selectedrule, setSelectedRule] = useState(null);
-    const [index, setIndex] = useState(0);
+    // const [aclData, setAclData] = useState([]);
+   
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [Jsondata, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
-    const [fetchLoading, setFetchLoading] = useState(true);
+   
     const [frontendNames, setFrontendNames] = useState([]);
     const [selectedfrontend, setSelectedFrontend] = useState(null);
     const [ALLaclNames, setALLAclNames] = useState(null);
@@ -80,7 +78,6 @@ const SwitchingRules = () => {
     // };
 
     useEffect(() => {
-        setLoadingFlag(true);
         fetch(IP + "backend_switching_rule", {
             headers: {
                 "Authorization": localStoragekey
@@ -130,12 +127,10 @@ const SwitchingRules = () => {
                 } catch (error) {
                     console.error('Error parsing JSON data:', error);
                 } finally {
-                    setLoadingFlag(false);
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
-                setLoadingFlag(false);
             });
     }, []);
 
@@ -170,7 +165,6 @@ const SwitchingRules = () => {
             var ruleaclname = rulesData[i]?.cond_test
             if (ruleaclname) {
                 if (i === 0) {
-                    setSelectedRule(ruleaclname)
                 }
                 var temp = {}
                 temp.label = ruleaclname;
@@ -184,7 +178,6 @@ const SwitchingRules = () => {
                 [`backendname_${i}`]: rulesData[i]?.name,
             })
         }
-        setAclData(dummyrulesacl)
     }, [rulesData]);
 
     const onFinish = (values) => {
@@ -215,7 +208,6 @@ const SwitchingRules = () => {
         })
             .then(response => {
                 console.log('Save response:', response);
-                setLoadingFlag(false);
                 if (response.status === 200) {
                     message.success('Saved successfully!');
                 } else {
@@ -224,7 +216,6 @@ const SwitchingRules = () => {
             })
             .catch(error => {
                 console.error('Save error:', error);
-                setLoadingFlag(false);
                 message.error('An error occurred while saving.');
             });
 
@@ -452,7 +443,7 @@ const SwitchingRules = () => {
                                                     style={{ width: "4cm", marginTop: "0.2cm", marginLeft: "0.1cm", }}
                                                     options={ALLaclNames}
                                                     // value={selectedrule}
-                                                    onChange={(value) => setSelectedRule(value)}
+                                                    // onChange={(value) => setSelectedRule(value)}
                                                 // defaultValue={selectedrule}
                                                 // onChange={(value) => handlePrimaryContactChange(index, value)}
                                                 >
@@ -482,13 +473,11 @@ const SwitchingRules = () => {
                                                 <MinusCircleFilled style={{ fontSize: "20px", color: "rgb(255 22 22)", cursor: "pointer" }}
                                                     // onClick={() => handleDelete(index)} 
                                                     onClick={() => {
-                                                        const frontendName = selectedfrontend;
-                                                        const indexvalues = form.getFieldValue(`index_${index}`);
+                                                        
 
                                                         const condition = form.getFieldValue(`condition_${index}`);
                                                         const aclName = form.getFieldValue(`aclName_${index}`);
                                                         const BackendName = form.getFieldValue(`backendname_${index}`);
-                                                        const Index = form.getFieldValue(`index_${index}`);
 
                                                         handleDelete(index);
 

@@ -12,7 +12,7 @@ const { Content } = Layout;
 
 const LoginForm = () => {
     const IP = IpAddress();
-    const [proToken, setproToken] = useState(null);
+   
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const onFinish = values => {

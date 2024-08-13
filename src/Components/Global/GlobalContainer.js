@@ -3,67 +3,17 @@ import { Form, Input, Button, message, Select,  Row, Col, } from 'antd';
 import '../CssFolder/StyleCss.css';
 import IpAddress from '../../IPConfig';
 import axios from 'axios';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
 const GlobalContainer = () => {
     const IP = IpAddress();
-    const [tlsSecurity, setTlsSecurity] = useState('');
     const [showMaxMinVersions, setShowMaxMinVersions] = useState(false);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [error, setError] = useState(null);
     const [form] = Form.useForm();
-    const [Jsondata, setJsonData] = useState({});
-    const [LoadingFlag, setLoadingFlag] = useState(false);
-    const [fetchLoading, setFetchLoading] = useState(true);
-    // console.log('protokenis this',props.protoken);
-
-    const location = useLocation();
-    const navigate = useNavigate();
-
-    const inputStyle = {
-        fontWeight: '500',
-        textAlign: 'left',
-        fontSize: "12px",
-        width: '100%',
-        maxWidth: '200px',
-    };
-    const formItemStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'flex-start',  // Align items to the left
-        width: '100%',
-        marginBottom: '20px',
-    };
-    const formStyle = {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        maxWidth: '1300px',
-        backgroundColor: '#fff',
-
-    };
-
-    const containerStyle = {
-        position: 'relative',
-        width: '100%',
-        minHeight: '100vh',
-        padding: '20px',
-        backgroundColor: '#dee2e6',
-        padding: '20px'
-    };
-    const headerStyle = {
-        position: 'relative',
-        marginBottom: '20px',
-        fontSize: '18px',
-        fontWeight: 'bold',
-    };
-
-    const buttonGroupStyle = {
-        textAlign: 'left',
-        marginTop: '20px',
-    };
+    const [Jsondata, setJsonData] = useState({});   
+    const navigate = useNavigate(); 
 
     const handleSubmit = (values) => {
         console.log('Form values: ', values);
@@ -79,26 +29,18 @@ const GlobalContainer = () => {
 			navigate('/')
 		}
 	}, [])
-    // console.log("the token is ", localStoragekey)
     useEffect(() => {
-        // Update the screen width whenever the window is resized
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
         };
         window.addEventListener('resize', handleResize);
-        // Clean up the event listener when the component unmounts
         return () => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
 
-    const decodeEntities = (encodedString) => {
-        const textArea = document.createElement('textarea');
-        textArea.innerHTML = encodedString;
-        return textArea.value;
-    };
+   
     const handleTlsSecurityChange = (value) => {
-        setTlsSecurity(value);
         if (value === 'Allow') {
             setShowMaxMinVersions(true);
             form.setFieldsValue({ [`tlsSecurity`]: "Allow" });
@@ -109,7 +51,6 @@ const GlobalContainer = () => {
     };
     // console.log("Jsondata is this",Jsondata.data.data)
     useEffect(() => {
-        setLoadingFlag(true)
         fetch(IP + "global", {
             headers: {
                 "Authorization": localStoragekey
@@ -121,7 +62,6 @@ const GlobalContainer = () => {
                 if (data.error === 0) {
                     setJsonData(data)
                     console.log("The data is", data);
-                    setLoadingFlag(false)
 
                 } else if (data.error === 1) {
                     // navigate('/');
@@ -207,7 +147,6 @@ const GlobalContainer = () => {
         })
             .then(response => {
                 console.log('Save response:', response);
-                setLoadingFlag(false);
                 if (response.status === 200 && response.data.error === 0) {
                     message.success('Saved successfully!');
                 } else {
@@ -216,7 +155,6 @@ const GlobalContainer = () => {
             })
             .catch(error => {
                 console.error('Save error:', error);
-                setLoadingFlag(false);
                 message.error('An error occurred while saving.');
             });
 
