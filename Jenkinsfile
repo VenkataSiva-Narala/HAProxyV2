@@ -5,48 +5,56 @@ pipeline {
         nodejs 'Nodejs' // Use the NodeJS installation configured in Jenkins
     }
  
+    environment {
+        DOCKER_IMAGE_NAME = 'myapp1' // Name of the Docker image
+        DOCKER_HUB_REPO = 'devarajareddy/haproxyfrontend' // Docker Hub repository
+    }
+ 
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the source code from the repository
                 git 'https://github.com/VenkataSiva-Narala/HAProxyV2.git'
             }
         }
+ 
         stage('Install Dependencies') {
             steps {
-                // Use NodeJS wrapper to ensure the environment is set up correctly
                 withEnv(['PATH+NODEJS=${tool name: "Nodejs"}/bin']) {
                     sh 'npm install'
                 }
             }
         }
+ 
         stage('Build') {
             steps {
                 withEnv(['PATH+NODEJS=${tool name: "Nodejs"}/bin']) {
-                    // Build the React application
-                    sh 'CI=false npm run build'
-                    // sh 'npm run build'
+                    sh 'CI= npm run build'
                 }
             }
         }
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                withEnv(['PATH+NODEJS=${tool name: "Nodejs"}/bin']) {
-                    // Run tests
-                    sh 'npm test'
-                }
+                sh 'sudo docker build -t ${DOCKER_IMAGE_NAME}:latest .'
             }
         }
-        stage('Deploy') {
+ 
+        stage('Run Docker Container') {
             steps {
-                // Deploy the application (this step will vary based on your deployment method)
-                // Example: copying build files to a web server
-                withEnv(['PATH+NODEJS=${tool name: "Nodejs"}/bin']) {
+                sh 'sudo docker run -d -p 8083:80 ${DOCKER_IMAGE_NAME}:latest' // Maps container's port 80 to host's port 8081
+            }
+        }
+ 
+        stage('Tag and Push to Docker Hub') {
+            steps {
+                script {
+                    // Tag the Docker image with the Docker Hub repository
                     sh '''
-                    if [ -d /var/www/html ]; then
-                        sudo rm -rf /var/www/html/*
-                        sudo cp -r build/* /var/www/html/
-                    fi
+                    sudo docker tag ${DOCKER_IMAGE_NAME}:latest ${DOCKER_HUB_REPO}:latest
+                    '''
+ 
+                    // Push the Docker image to Docker Hub
+                    sh '''
+                    sudo docker push ${DOCKER_HUB_REPO}:latest
                     '''
                 }
             }
@@ -55,12 +63,10 @@ pipeline {
  
     post {
         success {
-            // Actions to perform on successful build
-            echo 'Build completed successfully!'
+            echo 'Build, deployment, and Docker Hub push completed successfully!'
         }
         failure {
-            // Actions to perform on failed build
-            echo 'Build failed!'
+            echo 'Build, deployment, or Docker Hub push failed!'
         }
     }
 }
