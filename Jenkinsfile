@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Run Docker Container') {
             steps {
-                sh 'sudo docker run -d -p 8084:80 ${DOCKER_IMAGE_NAME}:latest' // Maps container's port 80 to host's port 8083
+                sh 'sudo docker run -d -p 8085:80 ${DOCKER_IMAGE_NAME}:latest' // Maps container's port 80 to host's port 8083
             }
         }
       
