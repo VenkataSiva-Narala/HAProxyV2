@@ -7,7 +7,7 @@ pipeline {
  
     environment {
         DOCKER_IMAGE_NAME = 'myapp1' // Name of the Docker image
-        DOCKER_HUB_REPO = 'devarajareddy/haproxyfrontend' // Docker Hub repository
+        DOCKER_HUB_REPO = 'devarajareddy/haproxxyfrontend' // Docker Hub repository
     }
  
     stages {
