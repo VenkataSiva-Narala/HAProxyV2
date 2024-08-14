@@ -4,7 +4,7 @@ pipeline {
         nodejs 'Nodejs' // Use the NodeJS installation configured in Jenkins
     }
     environment {
-        DOCKER_IMAGE_NAME = 'myapp1' // Name of the Docker image
+        DOCKER_IMAGE_NAME = 'myapp2' // Name of the Docker image
         DOCKER_HUB_REPO = 'devarajareddy/haproxxyfrontend' // Docker Hub repository
     }
     stages {
@@ -35,23 +35,10 @@ pipeline {
         }
         stage('Run Docker Container') {
             steps {
-                sh 'sudo docker run -d -p 8083:80 ${DOCKER_IMAGE_NAME}:latest' // Maps container's port 80 to host's port 8083
+                sh 'sudo docker run -d -p 8084:80 ${DOCKER_IMAGE_NAME}:latest' // Maps container's port 80 to host's port 8083
             }
         }
-        stage('Tag and Push to Docker Hub') {
-            steps {
-                script {
-                    // Tag the Docker image with the Docker Hub repository
-                    sh '''
-                    sudo docker tag ${DOCKER_IMAGE_NAME}:latest ${DOCKER_HUB_REPO}:latest
-                    '''
-                    // Push the Docker image to Docker Hub
-                    sh '''
-                    sudo docker push ${DOCKER_HUB_REPO}:latest
-                    '''
-                }
-            }
-        }
+      
     }
     post {
         success {
